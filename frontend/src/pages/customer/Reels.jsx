@@ -5,6 +5,7 @@ import * as interactionsApi from '../../api/interactions';
 import { useCart } from '../../context/CartContext';
 import Loader from '../../components/Loader';
 import EmptyState from '../../components/EmptyState';
+import { BookmarkIcon, HeartIcon } from '../../components/InteractionIcons';
 
 function ReelCard({ reel, onUpdate }) {
   const videoRef = useRef(null);
@@ -51,7 +52,7 @@ function ReelCard({ reel, onUpdate }) {
     <div className="reel-shade" />
     {!playing && <button className="reel-play" onClick={togglePlay} aria-label="Play reel">▶</button>}
     <div className="reel-copy"><span className="eyebrow">From {reel.partner?.business?.name || reel.partner?.name || 'a local kitchen'}</span><h2>{reel.caption || 'A delicious moment.'}</h2><p>Tap the video to {playing ? 'pause' : 'play'} · sound off</p>{reel.food && <Link className="reel-food-card" to={`/foods/${reel.food._id}`}><img src={reel.food.image} alt="" /><span><b>{reel.food.name}</b><small>${Number(reel.food.price || 0).toFixed(2)} · {reel.food.category}</small></span><button type="button" onClick={(event) => { event.preventDefault(); addItem(reel.food._id); }}>Order this</button></Link>}</div>
-    <div className="reel-actions"><button onClick={() => toggle('like')} className={reel.liked ? 'active' : ''} aria-label="Like reel">♥<small>{reel.likeCount || 0}</small></button><button onClick={() => toggle('save')} className={reel.saved ? 'active' : ''} aria-label="Save reel">▱<small>{reel.saveCount || 0}</small></button></div>
+    <div className="reel-actions"><button onClick={() => toggle('like')} className={reel.liked ? 'active' : ''} aria-label={reel.liked ? 'Unlike reel' : 'Like reel'} aria-pressed={Boolean(reel.liked)}><HeartIcon filled={reel.liked} /><small>{reel.likeCount || 0}</small></button><button onClick={() => toggle('save')} className={reel.saved ? 'active' : ''} aria-label={reel.saved ? 'Unsave reel' : 'Save reel'} aria-pressed={Boolean(reel.saved)}><BookmarkIcon filled={reel.saved} /><small>{reel.saveCount || 0}</small></button></div>
   </article>;
 }
 

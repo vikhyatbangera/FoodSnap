@@ -10,7 +10,7 @@ export default function Navbar() {
   const { itemCount } = useCart();
   const navigate = useNavigate();
   const customerLinks = [{ to: '/', label: 'Discover' }, { to: '/reels', label: 'Reels' }, { to: '/orders', label: 'Orders' }, { to: '/saved', label: 'Saved' }];
-  const partnerLinks = [{ to: '/partner', label: 'Dashboard' }, { to: '/partner/foods', label: 'Menu' }, { to: '/partner/reels/new', label: 'Create reel' }, { to: '/partner/orders', label: 'Orders' }];
+  const partnerLinks = [{ to: '/partner', label: 'Dashboard' }, { to: '/partner/foods', label: 'Menu' }, { to: '/partner/reels/new', label: 'Create reel' }, { to: '/partner/orders', label: 'Orders' }, { to: '/partner/reviews', label: 'Reviews' }, { to: '/partner/profile', label: 'Profile' }, { to: '/partner/settings', label: 'Settings' }];
   return (
     <header className="navbar">
       <div className="nav-inner">

@@ -16,11 +16,12 @@ import Saved from './pages/customer/Saved';
 import Profile from './pages/customer/Profile';
 import Settings from './pages/customer/Settings';
 import Dashboard from './pages/partner/Dashboard';
-import PlaceholderPage from './pages/PlaceholderPage';
-
-function PartnerPlaceholder({ title }) {
-  return <PlaceholderPage title={title} eyebrow="Partner space" />;
-}
+import PartnerFoods from './pages/partner/Foods';
+import PartnerReels from './pages/partner/Reels';
+import PartnerOrders from './pages/partner/Orders';
+import PartnerReviews from './pages/partner/Reviews';
+import PartnerBusinessProfile from './pages/partner/Profile';
+import PartnerSettings from './pages/partner/Settings';
 
 export default function App() {
   return (
@@ -44,12 +45,12 @@ export default function App() {
         </Route>
         <Route element={<ProtectedRoute role="partner" />}>
           <Route path="partner" element={<Dashboard />} />
-          <Route path="partner/foods" element={<PartnerPlaceholder title="Your menu, your signature." />} />
-          <Route path="partner/reels/new" element={<PartnerPlaceholder title="Share the story behind the dish." />} />
-          <Route path="partner/orders" element={<PartnerPlaceholder title="Keep every order moving." />} />
-          <Route path="partner/reviews" element={<PartnerPlaceholder title="Listen to your diners." />} />
-          <Route path="partner/profile" element={<PartnerPlaceholder title="Your kitchen’s profile." />} />
-          <Route path="partner/settings" element={<PartnerPlaceholder title="Kitchen settings." />} />
+          <Route path="partner/foods" element={<PartnerFoods />} />
+          <Route path="partner/reels/new" element={<PartnerReels />} />
+          <Route path="partner/orders" element={<PartnerOrders />} />
+          <Route path="partner/reviews" element={<PartnerReviews />} />
+          <Route path="partner/profile" element={<PartnerBusinessProfile />} />
+          <Route path="partner/settings" element={<PartnerSettings />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
