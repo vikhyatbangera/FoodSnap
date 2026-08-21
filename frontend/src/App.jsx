@@ -4,12 +4,19 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import Home from './pages/customer/Home';
+import Reels from './pages/customer/Reels';
+import Explore from './pages/customer/Explore';
+import FoodDetail from './pages/customer/FoodDetail';
+import PartnerProfile from './pages/customer/PartnerProfile';
+import Cart from './pages/customer/Cart';
+import Checkout from './pages/customer/Checkout';
+import Orders from './pages/customer/Orders';
+import OrderDetail from './pages/customer/OrderDetail';
+import Saved from './pages/customer/Saved';
+import Profile from './pages/customer/Profile';
+import Settings from './pages/customer/Settings';
 import Dashboard from './pages/partner/Dashboard';
 import PlaceholderPage from './pages/PlaceholderPage';
-
-function CustomerPlaceholder({ title }) {
-  return <PlaceholderPage title={title} eyebrow="Customer space" />;
-}
 
 function PartnerPlaceholder({ title }) {
   return <PlaceholderPage title={title} eyebrow="Partner space" />;
@@ -23,17 +30,17 @@ export default function App() {
       <Route element={<Layout />}>
         <Route element={<ProtectedRoute role="customer" />}>
           <Route index element={<Home />} />
-          <Route path="reels" element={<CustomerPlaceholder title="A new way to taste the city." />} />
-          <Route path="explore" element={<CustomerPlaceholder title="Explore your next craving." />} />
-          <Route path="foods/:id" element={<CustomerPlaceholder title="A closer look at something delicious." />} />
-          <Route path="partners/:id" element={<CustomerPlaceholder title="Meet the kitchen behind the plate." />} />
-          <Route path="cart" element={<CustomerPlaceholder title="Your table, almost ready." />} />
-          <Route path="checkout" element={<CustomerPlaceholder title="A few final details." />} />
-          <Route path="orders" element={<CustomerPlaceholder title="Your food story so far." />} />
-          <Route path="orders/:id" element={<CustomerPlaceholder title="Order details." />} />
-          <Route path="saved" element={<CustomerPlaceholder title="The good stuff you saved." />} />
-          <Route path="profile" element={<CustomerPlaceholder title="Your FoodSnap profile." />} />
-          <Route path="settings" element={<CustomerPlaceholder title="Make FoodSnap yours." />} />
+          <Route path="reels" element={<Reels />} />
+          <Route path="explore" element={<Explore />} />
+          <Route path="foods/:id" element={<FoodDetail />} />
+          <Route path="partners/:id" element={<PartnerProfile />} />
+          <Route path="cart" element={<Cart />} />
+          <Route path="checkout" element={<Checkout />} />
+          <Route path="orders" element={<Orders />} />
+          <Route path="orders/:id" element={<OrderDetail />} />
+          <Route path="saved" element={<Saved />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="settings" element={<Settings />} />
         </Route>
         <Route element={<ProtectedRoute role="partner" />}>
           <Route path="partner" element={<Dashboard />} />

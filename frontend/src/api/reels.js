@@ -5,3 +5,5 @@ export const createReel = (formData) => client.post('/reels', formData, { header
 export const updateReel = (id, formData) => client.patch(`/reels/${id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } }).then((response) => response.data);
 export const deleteReel = (id) => client.delete(`/reels/${id}`).then((response) => response.data);
 export const viewReel = (id) => client.post(`/reels/${id}/view`).then((response) => response.data);
+export const toggleLike = (target) => client.post('/likes', { targetType: 'reel', target }).then((response) => response.data);
+export const toggleSave = (target) => client.post('/saves', { targetType: 'reel', target }).then((response) => response.data);

@@ -82,19 +82,9 @@ async function seed() {
     { name: 'Olivia Smith', email: 'olivia@example.com', passwordHash: hashedPassword, role: 'customer' }
   ]);
 
-  const categoryAsset = {
-    Curry: 'seed-food-curry.png',
-    Biryani: 'seed-food-biryani.png',
-    Noodles: 'seed-food-noodles.png',
-    Wraps: 'seed-food-wraps.png',
-    Dessert: 'seed-food-dessert.png',
-    Pasta: 'seed-food-pasta.png',
-    Pizza: 'seed-food-pizza.png',
-    Salad: 'seed-food-salad.png',
-    Soup: 'seed-food-soup.png',
-    Bowls: 'seed-food-bowl.png',
-    Smoothie: 'seed-food-smoothie.png'
-  };
+  function slugify(value) {
+    return value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  }
   const menus = [
     [
       ['Chicken Tikka Masala', 'Charred chicken in a creamy tomato and fenugreek gravy.', 'Curry', 14.5],
@@ -127,7 +117,7 @@ async function seed() {
         name,
         description,
         price,
-        image: `${env.publicBaseUrl}/uploads/${categoryAsset[category]}`,
+        image: `${env.publicBaseUrl}/uploads/seed-food-${slugify(name)}.png`,
         category,
         tags: ['fresh', partnerIndex === 2 ? 'plant-based' : 'popular'],
         ratingAvg: 4 + ((foodIndex + partnerIndex) % 10) / 10,
@@ -147,8 +137,8 @@ async function seed() {
       {
         partner: partners[partnerIndex]._id,
         food: partnerFoods[0]._id,
-        video: `${env.publicBaseUrl}/uploads/seed-reel-${partnerIndex + 1}.mp4`,
-        thumbnail: partnerFoods[0].image,
+        video: `${env.publicBaseUrl}/uploads/seed-reel-${['spice', 'pasta', 'green'][partnerIndex]}.mp4`,
+        thumbnail: `${env.publicBaseUrl}/uploads/seed-reel-${['spice', 'pasta', 'green'][partnerIndex]}.png`,
         caption: `Behind the scenes at ${partners[partnerIndex].business.name}`,
         views: 125 + partnerIndex * 80,
         likeCount: 4 + partnerIndex
@@ -156,7 +146,7 @@ async function seed() {
       {
         partner: partners[partnerIndex]._id,
         food: partnerFoods[1]._id,
-        video: `${env.publicBaseUrl}/uploads/seed-reel-${partnerIndex + 1}.mp4`,
+        video: `${env.publicBaseUrl}/uploads/seed-reel-${['spice', 'pasta', 'green'][partnerIndex]}.mp4`,
         thumbnail: partnerFoods[1].image,
         caption: `Watch our ${partnerFoods[1].name} come together`,
         views: 90 + partnerIndex * 65,
