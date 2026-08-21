@@ -74,12 +74,41 @@ async function seed() {
         phone: '+1 555 0103',
         cuisines: ['Healthy', 'Vegan']
       }
+    },
+    {
+      name: 'Hiroshi Tanaka',
+      email: 'sushi@example.com',
+      passwordHash: hashedPassword,
+      role: 'partner',
+      business: {
+        name: 'Sushi Express',
+        description: 'Fresh and authentic sushi rolls and sashimi.',
+        address: '22 Ocean Drive',
+        phone: '+1 555 0104',
+        cuisines: ['Japanese', 'Sushi']
+      }
+    },
+    {
+      name: 'Jack Smith',
+      email: 'burger@example.com',
+      passwordHash: hashedPassword,
+      role: 'partner',
+      business: {
+        name: 'Burger Joint',
+        description: 'Classic American burgers, fries, and shakes.',
+        address: '50 Main Street',
+        phone: '+1 555 0105',
+        cuisines: ['American', 'Burgers']
+      }
     }
   ]);
+
   const customers = await User.insertMany([
     { name: 'Maya Chen', email: 'maya@example.com', passwordHash: hashedPassword, role: 'customer' },
     { name: 'Liam Patel', email: 'liam@example.com', passwordHash: hashedPassword, role: 'customer' },
-    { name: 'Olivia Smith', email: 'olivia@example.com', passwordHash: hashedPassword, role: 'customer' }
+    { name: 'Olivia Smith', email: 'olivia@example.com', passwordHash: hashedPassword, role: 'customer' },
+    { name: 'James Bond', email: 'james@example.com', passwordHash: hashedPassword, role: 'customer' },
+    { name: 'Emma Stone', email: 'emma@example.com', passwordHash: hashedPassword, role: 'customer' }
   ]);
 
   function slugify(value) {
@@ -106,6 +135,20 @@ async function seed() {
       ['Mango Matcha Smoothie', 'Mango, banana, oat milk, and ceremonial matcha blended smooth.', 'Smoothie', 8.5],
       ['Smoky Jackfruit Wrap', 'Pulled jackfruit, crunchy slaw, greens, and chipotle cashew cream.', 'Wraps', 11.5],
       ['Dark Chocolate Chia Pudding', 'Cacao chia pudding with berries, toasted coconut, and maple.', 'Dessert', 7.5]
+    ],
+    [
+      ['California Roll', 'Crab, avocado, cucumber', 'Sushi', 8.5],
+      ['Spicy Tuna Roll', 'Tuna with spicy mayo', 'Sushi', 9.5],
+      ['Salmon Nigiri', 'Fresh salmon over rice', 'Sushi', 10.0],
+      ['Edamame', 'Steamed soybeans with salt', 'Sides', 4.0],
+      ['Miso Soup', 'Traditional miso broth', 'Soup', 3.5]
+    ],
+    [
+      ['Classic Burger', 'Beef patty with cheese', 'Burger', 10.5],
+      ['Crispy Chicken Burger', 'Fried chicken breast', 'Burger', 11.0],
+      ['French Fries', 'Golden salted fries', 'Sides', 4.5],
+      ['Onion Rings', 'Crispy battered rings', 'Sides', 5.0],
+      ['Vanilla Shake', 'Thick vanilla milkshake', 'Drink', 6.0]
     ]
   ];
   const foods = [];
@@ -131,14 +174,15 @@ async function seed() {
   const createdFoods = await Food.insertMany(foods);
 
   const reels = [];
+  const reelVideos = ['spice', 'pasta', 'green', 'spice', 'pasta'];
   for (let partnerIndex = 0; partnerIndex < partners.length; partnerIndex += 1) {
     const partnerFoods = createdFoods.slice(partnerIndex * 5, partnerIndex * 5 + 5);
     reels.push(
       {
         partner: partners[partnerIndex]._id,
         food: partnerFoods[0]._id,
-        video: `${env.publicBaseUrl}/uploads/seed-reel-${['spice', 'pasta', 'green'][partnerIndex]}.mp4`,
-        thumbnail: `${env.publicBaseUrl}/uploads/seed-reel-${['spice', 'pasta', 'green'][partnerIndex]}.png`,
+        video: `${env.publicBaseUrl}/uploads/seed-reel-${reelVideos[partnerIndex]}.mp4`,
+        thumbnail: `${env.publicBaseUrl}/uploads/seed-reel-${reelVideos[partnerIndex]}.png`,
         caption: `Behind the scenes at ${partners[partnerIndex].business.name}`,
         views: 125 + partnerIndex * 80,
         likeCount: 4 + partnerIndex
@@ -146,7 +190,7 @@ async function seed() {
       {
         partner: partners[partnerIndex]._id,
         food: partnerFoods[1]._id,
-        video: `${env.publicBaseUrl}/uploads/seed-reel-${['spice', 'pasta', 'green'][partnerIndex]}.mp4`,
+        video: `${env.publicBaseUrl}/uploads/seed-reel-${reelVideos[partnerIndex]}.mp4`,
         thumbnail: partnerFoods[1].image,
         caption: `Watch our ${partnerFoods[1].name} come together`,
         views: 90 + partnerIndex * 65,
@@ -157,26 +201,27 @@ async function seed() {
   const createdReels = await Reel.insertMany(reels);
 
   const interactions = [];
-  for (let index = 0; index < 6; index += 1) {
+  for (let index = 0; index < 10; index += 1) {
     interactions.push({
       user: customers[index % customers.length]._id,
       targetType: 'food',
       target: createdFoods[index]._id
     });
   }
-  for (let index = 0; index < 6; index += 1) {
+  for (let index = 0; index < 10; index += 1) {
     interactions.push({
       user: customers[(index + 1) % customers.length]._id,
       targetType: 'reel',
       target: createdReels[index]._id
     });
   }
-  await Like.insertMany(interactions.slice(0, 6));
-  await Save.insertMany(interactions.slice(6));
+  await Like.insertMany(interactions.slice(0, 10));
+  await Save.insertMany(interactions.slice(10));
 
   const statuses = ['placed', 'accepted', 'preparing', 'out_for_delivery', 'delivered', 'cancelled', 'placed', 'delivered', 'preparing', 'accepted', 'delivered', 'cancelled', 'placed', 'out_for_delivery', 'accepted'];
   const orders = [];
-  for (let index = 0; index < 15; index += 1) {
+  // Ensure we create enough orders to spread across all 5 customers and 5 partners
+  for (let index = 0; index < 25; index += 1) {
     const food = createdFoods[index % createdFoods.length];
     const status = statuses[index % statuses.length];
     const createdAt = new Date(Date.now() - (index + 1) * 2 * 24 * 60 * 60 * 1000);
@@ -210,8 +255,8 @@ async function seed() {
   await mongoose.connection.close();
   console.log('FoodSnap seed complete.');
   console.log('Demo password:', password);
-  console.log('Customers: maya@example.com, liam@example.com, olivia@example.com');
-  console.log('Partners: spice@example.com, pasta@example.com, green@example.com');
+  console.log('Customers: maya@example.com, liam@example.com, olivia@example.com, james@example.com, emma@example.com');
+  console.log('Partners: spice@example.com, pasta@example.com, green@example.com, sushi@example.com, burger@example.com');
 }
 
 seed().catch(async (error) => {
