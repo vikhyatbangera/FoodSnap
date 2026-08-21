@@ -16,6 +16,12 @@ const orderSchema = new mongoose.Schema(
     subtotal: { type: Number, required: true, min: 0, set: roundMoney, get: roundMoney },
     deliveryFee: { type: Number, required: true, min: 0, set: roundMoney, get: roundMoney },
     total: { type: Number, required: true, min: 0, set: roundMoney, get: roundMoney },
+    paymentId: { type: String },
+    paymentStatus: {
+      type: String,
+      enum: ['pending', 'paid', 'failed'],
+      default: 'pending'
+    },
     status: {
       type: String,
       enum: ['placed', 'accepted', 'preparing', 'out_for_delivery', 'delivered', 'cancelled'],

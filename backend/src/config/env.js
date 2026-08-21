@@ -1,7 +1,7 @@
 const path = require('path');
 const dotenv = require('dotenv');
 
-dotenv.config({ path: path.resolve(process.cwd(), '.env.example') });
+dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 
 const required = ['JWT_SECRET'];
 for (const name of required) {

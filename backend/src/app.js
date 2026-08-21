@@ -42,6 +42,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/payments', require('./routes/payments'));
 
 app.use((req, res, next) => next(new ApiError(404, 'Route not found')));
 

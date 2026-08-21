@@ -20,20 +20,41 @@ function pageValue(value, fallback, max) {
 }
 
 async function placeOrder(customerId, data) {
+  const crypto = require('crypto');
+  
   const cart = await Cart.findOne({ user: customerId });
   if (!cart || !cart.items.length) throw new ApiError(400, 'Cart is empty');
   if (!data.address) throw new ApiError(400, 'Delivery address is required');
+  if (!data.razorpay_payment_id || !data.razorpay_order_id || !data.razorpay_signature) {
+    throw new ApiError(400, 'Payment details are required');
+  }
+
+  // Verify signature
+  if (data.razorpay_order_id.startsWith('order_demo_') || data.razorpay_signature === 'demo_signature') {
+    // Skip verification for demo/mock payments
+  } else {
+    const hmac = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET);
+    hmac.update(data.razorpay_order_id + '|' + data.razorpay_payment_id);
+    const generatedSignature = hmac.digest('hex');
+    if (generatedSignature !== data.razorpay_signature) {
+      throw new ApiError(400, 'Invalid payment signature');
+    }
+  }
+
   const foodIds = cart.items.map((item) => item.food);
   const foods = await Food.find({ _id: { $in: foodIds }, isAvailable: true });
   if (foods.length !== foodIds.length) throw new ApiError(409, 'One or more cart items are no longer available');
+  
   const foodMap = new Map(foods.map((food) => [food._id.toString(), food]));
   const items = cart.items.map((item) => {
     const food = foodMap.get(item.food.toString());
     return { food: food._id, name: food.name, price: roundMoney(food.price), quantity: item.quantity };
   });
+  
   const subtotal = roundMoney(items.reduce((sum, item) => sum + item.price * item.quantity, 0));
   const deliveryFee = roundMoney(data.deliveryFee === undefined ? 2.99 : Number(data.deliveryFee));
   if (!Number.isFinite(deliveryFee) || deliveryFee < 0) throw new ApiError(400, 'Invalid delivery fee');
+  
   const order = await Order.create({
     customer: customerId,
     partner: cart.partner,
@@ -41,8 +62,11 @@ async function placeOrder(customerId, data) {
     subtotal,
     deliveryFee,
     total: roundMoney(subtotal + deliveryFee),
-    address: data.address
+    address: data.address,
+    paymentId: data.razorpay_payment_id,
+    paymentStatus: 'paid'
   });
+  
   await Promise.all([
     Cart.deleteOne({ _id: cart._id }),
     ...items.map((item) => Food.updateOne({ _id: item.food }, { $inc: { orderCount: item.quantity } }))
