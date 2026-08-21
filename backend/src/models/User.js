@@ -29,6 +29,7 @@ const userSchema = new mongoose.Schema(
 );
 
 userSchema.index({ email: 1 }, { unique: true });
+userSchema.index({ name: 'text', 'business.name': 'text', 'business.description': 'text' });
 userSchema.virtual('isPartner').get(function isPartner() {
   return this.role === 'partner';
 });

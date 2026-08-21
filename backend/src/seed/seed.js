@@ -19,7 +19,8 @@ async function seed() {
   await connectDb();
   const assetsDir = path.resolve(__dirname, '../../seed/assets');
   fs.mkdirSync(env.uploadsDir, { recursive: true });
-  for (const asset of ['seed-food.png', 'seed-reel.mp4']) {
+  const assets = fs.readdirSync(assetsDir).filter((asset) => /\.(png|mp4)$/i.test(asset));
+  for (const asset of assets) {
     fs.copyFileSync(path.join(assetsDir, asset), path.join(env.uploadsDir, asset));
   }
   await Promise.all([
@@ -86,6 +87,19 @@ async function seed() {
     ['Pasta', 'Pizza', 'Salad', 'Soup', 'Dessert'],
     ['Bowls', 'Salad', 'Smoothie', 'Wraps', 'Dessert']
   ];
+  const categoryAsset = {
+    Curry: 'seed-food-curry.png',
+    Biryani: 'seed-food-biryani.png',
+    Noodles: 'seed-food-noodles.png',
+    Wraps: 'seed-food-wraps.png',
+    Dessert: 'seed-food-dessert.png',
+    Pasta: 'seed-food-pasta.png',
+    Pizza: 'seed-food-pizza.png',
+    Salad: 'seed-food-salad.png',
+    Soup: 'seed-food-soup.png',
+    Bowls: 'seed-food-bowl.png',
+    Smoothie: 'seed-food-smoothie.png'
+  };
   const foods = [];
   for (let partnerIndex = 0; partnerIndex < partners.length; partnerIndex += 1) {
     for (let foodIndex = 0; foodIndex < 5; foodIndex += 1) {
@@ -94,7 +108,7 @@ async function seed() {
         name: `${partners[partnerIndex].business.name} ${['Signature', 'Classic', 'Garden', 'Chef', 'House'][foodIndex]}`,
         description: `A customer favourite from ${partners[partnerIndex].business.name}.`,
         price: 9 + partnerIndex * 2 + foodIndex * 1.75,
-        image: `${env.publicBaseUrl}/uploads/seed-food.png`,
+        image: `${env.publicBaseUrl}/uploads/${categoryAsset[categories[partnerIndex][foodIndex]]}`,
         category: categories[partnerIndex][foodIndex],
         tags: ['fresh', partnerIndex === 2 ? 'plant-based' : 'popular'],
         ratingAvg: 4 + ((foodIndex + partnerIndex) % 10) / 10,
@@ -114,8 +128,8 @@ async function seed() {
       {
         partner: partners[partnerIndex]._id,
         food: partnerFoods[0]._id,
-        video: `${env.publicBaseUrl}/uploads/seed-reel.mp4`,
-        thumbnail: `${env.publicBaseUrl}/uploads/seed-food.png`,
+        video: `${env.publicBaseUrl}/uploads/seed-reel-${partnerIndex + 1}.mp4`,
+        thumbnail: partnerFoods[0].image,
         caption: `Behind the scenes at ${partners[partnerIndex].business.name}`,
         views: 125 + partnerIndex * 80,
         likeCount: 4 + partnerIndex
@@ -123,8 +137,8 @@ async function seed() {
       {
         partner: partners[partnerIndex]._id,
         food: partnerFoods[1]._id,
-        video: `${env.publicBaseUrl}/uploads/seed-reel.mp4`,
-        thumbnail: `${env.publicBaseUrl}/uploads/seed-food.png`,
+        video: `${env.publicBaseUrl}/uploads/seed-reel-${partnerIndex + 1}.mp4`,
+        thumbnail: partnerFoods[1].image,
         caption: `Watch our ${partnerFoods[1].name} come together`,
         views: 90 + partnerIndex * 65,
         saveCount: 2 + partnerIndex

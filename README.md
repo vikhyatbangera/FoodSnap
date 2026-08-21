@@ -43,9 +43,11 @@ All endpoints are under `/api`.
 - `POST /auth/register`, `POST /auth/login`, `GET /auth/me`
 - `PATCH /users/me`, `PATCH /users/me/settings`
 - `GET /partners`, `GET /partners/:id`, `PATCH /partners/me`
-- Food, reel, interaction, search, cart, order, review, analytics, and chat
-  routes are reserved by the architecture and will be implemented in later
-  backend handoffs.
+- `GET /foods`, `GET /foods/:id`, partner food CRUD, and food reviews
+- `GET /reels`, partner reel CRUD, and `POST /reels/:id/view`
+- `POST /likes`, `POST /saves`, and `GET /search`
+- Cart CRUD, customer/partner order flows, and review update/delete
+- `GET /analytics/overview` for partners and `POST /chat` for both roles
 
 Protected endpoints use `Authorization: Bearer <token>`. Partner profile and
 user photo uploads use multipart form fields named `logo` and `photo`.

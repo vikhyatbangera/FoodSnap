@@ -7,6 +7,15 @@ const env = require('./config/env');
 const authRoutes = require('./routes/auth.routes');
 const userRoutes = require('./routes/user.routes');
 const partnerRoutes = require('./routes/partner.routes');
+const foodRoutes = require('./routes/food.routes');
+const reelRoutes = require('./routes/reel.routes');
+const interactionRoutes = require('./routes/interaction.routes');
+const searchRoutes = require('./routes/search.routes');
+const cartRoutes = require('./routes/cart.routes');
+const orderRoutes = require('./routes/order.routes');
+const reviewRoutes = require('./routes/review.routes');
+const analyticsRoutes = require('./routes/analytics.routes');
+const chatRoutes = require('./routes/chat.routes');
 const ApiError = require('./utils/ApiError');
 
 const app = express();
@@ -24,6 +33,15 @@ app.get('/health', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/partners', partnerRoutes);
+app.use('/api/foods', foodRoutes);
+app.use('/api/reels', reelRoutes);
+app.use('/api', interactionRoutes);
+app.use('/api/search', searchRoutes);
+app.use('/api/cart', cartRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/reviews', reviewRoutes);
+app.use('/api/analytics', analyticsRoutes);
+app.use('/api/chat', chatRoutes);
 
 app.use((req, res, next) => next(new ApiError(404, 'Route not found')));
 

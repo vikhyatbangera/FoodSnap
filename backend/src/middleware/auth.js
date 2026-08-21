@@ -26,6 +26,20 @@ async function requireAuth(req, res, next) {
   }
 }
 
+async function optionalAuth(req, res, next) {
+  const header = req.get('authorization') || '';
+  const [scheme, token] = header.split(' ');
+  if (scheme !== 'Bearer' || !token) return next();
+  try {
+    const payload = jwt.verify(token, env.jwtSecret);
+    const user = await User.findById(payload.sub).lean();
+    if (user) req.user = user;
+  } catch (error) {
+    void error;
+  }
+  return next();
+}
+
 function requireRole(role) {
   return function roleMiddleware(req, res, next) {
     if (!req.user || req.user.role !== role) {
@@ -35,4 +49,4 @@ function requireRole(role) {
   };
 }
 
-module.exports = { requireAuth, requireRole };
+module.exports = { requireAuth, optionalAuth, requireRole };

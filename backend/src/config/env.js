@@ -18,6 +18,7 @@ const env = {
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
   clientOrigin: process.env.CLIENT_ORIGIN || 'http://localhost:5173',
   publicBaseUrl: process.env.PUBLIC_BASE_URL || 'http://localhost:5000',
+  openaiApiKey: process.env.OPENAI_API_KEY || '',
   uploadsDir: path.resolve(__dirname, '../../uploads')
 };
 

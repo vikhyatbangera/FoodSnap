@@ -33,15 +33,22 @@ async function updateSettings(userId, data) {
 }
 
 async function getSaved(userId) {
-  const [savedFoods, savedReels] = await Promise.all([
-    Save.find({ user: userId, targetType: 'food' }).sort({ createdAt: -1 }).distinct('target'),
-    Save.find({ user: userId, targetType: 'reel' }).sort({ createdAt: -1 }).distinct('target')
+  const [savedFoodRecords, savedReelRecords] = await Promise.all([
+    Save.find({ user: userId, targetType: 'food' }).sort({ createdAt: -1 }).select('target'),
+    Save.find({ user: userId, targetType: 'reel' }).sort({ createdAt: -1 }).select('target')
   ]);
+  const savedFoods = savedFoodRecords.map((record) => record.target);
+  const savedReels = savedReelRecords.map((record) => record.target);
   const [foods, reels] = await Promise.all([
     Food.find({ _id: { $in: savedFoods } }).populate('partner', 'name business photo'),
     Reel.find({ _id: { $in: savedReels } }).populate('partner', 'name business photo').populate('food', 'name price image')
   ]);
-  return { foods, reels };
+  const foodById = new Map(foods.map((food) => [food._id.toString(), food]));
+  const reelById = new Map(reels.map((reel) => [reel._id.toString(), reel]));
+  return {
+    foods: savedFoods.map((id) => foodById.get(id.toString())).filter(Boolean),
+    reels: savedReels.map((id) => reelById.get(id.toString())).filter(Boolean)
+  };
 }
 
 module.exports = { getMe, updateMe, updateSettings, getSaved };
