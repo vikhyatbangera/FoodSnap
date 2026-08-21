@@ -18,7 +18,7 @@ export default function Navbar() {
         <div className="nav-search"><SearchBar compact /></div>
         {user && <nav className="desktop-links">{(user.role === 'partner' ? partnerLinks : customerLinks).map((link) => <NavLink key={link.to} to={link.to} end={link.to === '/' || link.to === '/partner'}>{link.label}</NavLink>)}</nav>}
         <div className="nav-actions">
-          {user?.role === 'customer' && <Link className="cart-link" to="/cart" aria-label={`Cart with ${itemCount} items`}>▱<sup>{itemCount}</sup></Link>}
+          {user?.role === 'customer' && <Link className="cart-link" to="/cart" aria-label={`Cart with ${itemCount} items`}>🛒<sup>{itemCount}</sup></Link>}
           <button className="theme-toggle" onClick={toggleTheme} aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}>{theme === 'light' ? '☾' : '☀'}</button>
           {user ? <button className="avatar-button" onClick={() => navigate(user.role === 'partner' ? '/partner/profile' : '/profile')} aria-label="Open profile">{user.name?.charAt(0).toUpperCase()}</button> : <Link className="button button-small button-dark" to="/login">Sign in</Link>}
           {user && <button className="button button-small button-ghost logout-button" onClick={logout}>Log out</button>}

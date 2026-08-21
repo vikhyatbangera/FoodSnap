@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
+import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { CartProvider } from './context/CartContext';
@@ -14,6 +15,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <AuthProvider>
         <ThemeProvider>
           <CartProvider>
+            <Toaster position="top-center" toastOptions={{ style: { background: 'var(--ink)', color: 'var(--bg)', border: '1px solid var(--line)' } }} />
             <App />
           </CartProvider>
         </ThemeProvider>

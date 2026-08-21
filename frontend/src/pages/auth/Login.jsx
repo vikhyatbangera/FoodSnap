@@ -37,6 +37,10 @@ export default function Login() {
           {error && <div className="form-error" role="alert">{error}</div>}
           <label>Email<input type="email" autoComplete="email" value={form.email} onChange={(event) => setForm({ ...form, email: event.target.value })} placeholder="you@example.com" /></label>
           <label>Password<input type="password" autoComplete="current-password" value={form.password} onChange={(event) => setForm({ ...form, password: event.target.value })} placeholder="Your password" /></label>
+          <div className="demo-accounts" style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', margin: '0.5rem 0' }}>
+            <button type="button" className="button" style={{ fontSize: '0.85rem', padding: '0.5rem 1rem' }} onClick={() => setForm({ email: 'maya@example.com', password: 'Password123!' })}>Demo Customer</button>
+            <button type="button" className="button" style={{ fontSize: '0.85rem', padding: '0.5rem 1rem' }} onClick={() => setForm({ email: 'spice@example.com', password: 'Password123!' })}>Demo Partner</button>
+          </div>
           <button className="button button-accent button-wide" disabled={submitting}>{submitting ? 'Signing in…' : 'Sign in'}</button>
         </form>
         <p className="auth-switch">New to FoodSnap? <Link to="/register">Create an account</Link></p>

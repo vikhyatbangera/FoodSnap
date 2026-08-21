@@ -1,5 +1,6 @@
 import client from './client';
 
+export const createPaymentOrder = () => client.post('/payments/create-order').then((response) => response.data);
 export const placeOrder = (payload) => client.post('/orders', payload).then((response) => response.data);
 export const listMyOrders = (params) => client.get('/orders/mine', { params }).then((response) => response.data);
 export const getOrder = (id) => client.get(`/orders/${id}`).then((response) => response.data);
