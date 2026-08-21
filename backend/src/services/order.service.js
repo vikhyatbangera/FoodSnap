@@ -2,6 +2,7 @@ const Cart = require('../models/Cart');
 const Food = require('../models/Food');
 const Order = require('../models/Order');
 const ApiError = require('../utils/ApiError');
+const roundMoney = require('../utils/money');
 
 const transitions = {
   placed: ['accepted', 'cancelled'],
@@ -28,10 +29,10 @@ async function placeOrder(customerId, data) {
   const foodMap = new Map(foods.map((food) => [food._id.toString(), food]));
   const items = cart.items.map((item) => {
     const food = foodMap.get(item.food.toString());
-    return { food: food._id, name: food.name, price: food.price, quantity: item.quantity };
+    return { food: food._id, name: food.name, price: roundMoney(food.price), quantity: item.quantity };
   });
-  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const deliveryFee = data.deliveryFee === undefined ? 2.99 : Number(data.deliveryFee);
+  const subtotal = roundMoney(items.reduce((sum, item) => sum + item.price * item.quantity, 0));
+  const deliveryFee = roundMoney(data.deliveryFee === undefined ? 2.99 : Number(data.deliveryFee));
   if (!Number.isFinite(deliveryFee) || deliveryFee < 0) throw new ApiError(400, 'Invalid delivery fee');
   const order = await Order.create({
     customer: customerId,
@@ -39,7 +40,7 @@ async function placeOrder(customerId, data) {
     items,
     subtotal,
     deliveryFee,
-    total: subtotal + deliveryFee,
+    total: roundMoney(subtotal + deliveryFee),
     address: data.address
   });
   await Promise.all([

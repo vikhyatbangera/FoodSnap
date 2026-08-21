@@ -82,11 +82,6 @@ async function seed() {
     { name: 'Olivia Smith', email: 'olivia@example.com', passwordHash: hashedPassword, role: 'customer' }
   ]);
 
-  const categories = [
-    ['Curry', 'Biryani', 'Noodles', 'Wraps', 'Dessert'],
-    ['Pasta', 'Pizza', 'Salad', 'Soup', 'Dessert'],
-    ['Bowls', 'Salad', 'Smoothie', 'Wraps', 'Dessert']
-  ];
   const categoryAsset = {
     Curry: 'seed-food-curry.png',
     Biryani: 'seed-food-biryani.png',
@@ -100,16 +95,40 @@ async function seed() {
     Bowls: 'seed-food-bowl.png',
     Smoothie: 'seed-food-smoothie.png'
   };
+  const menus = [
+    [
+      ['Chicken Tikka Masala', 'Charred chicken in a creamy tomato and fenugreek gravy.', 'Curry', 14.5],
+      ['Hyderabadi Chicken Biryani', 'Fragrant basmati rice layered with spiced chicken and saffron.', 'Biryani', 16.75],
+      ['Chilli Garlic Hakka Noodles', 'Wok-tossed noodles with crisp vegetables and toasted garlic.', 'Noodles', 12.5],
+      ['Paneer Kathi Roll', 'Tandoori paneer, pickled onions, and mint chutney in a flaky paratha.', 'Wraps', 10.5],
+      ['Mango Saffron Kulfi', 'Silky mango kulfi finished with saffron and crushed pistachios.', 'Dessert', 7.25]
+    ],
+    [
+      ['Truffle Mushroom Tagliatelle', 'Hand-cut pasta with wild mushrooms, parmesan, and truffle oil.', 'Pasta', 18.5],
+      ['Wood-Fired Margherita Pizza', 'San Marzano tomato, fresh mozzarella, basil, and olive oil.', 'Pizza', 15.5],
+      ['Burrata Panzanella', 'Toasted ciabatta, heirloom tomatoes, basil, and creamy burrata.', 'Salad', 13.75],
+      ['Tuscan Tomato Basil Soup', 'Slow-simmered tomatoes, basil, garlic, and rustic focaccia.', 'Soup', 9.5],
+      ['Pistachio Mascarpone Tiramisu', 'Espresso-soaked ladyfingers layered with pistachio mascarpone.', 'Dessert', 8.75]
+    ],
+    [
+      ['Roasted Veggie Buddha Bowl', 'Quinoa, roasted seasonal vegetables, avocado, and tahini dressing.', 'Bowls', 13.5],
+      ['Citrus Kale Quinoa Salad', 'Tender kale, quinoa, orange segments, seeds, and lemon dressing.', 'Salad', 12.75],
+      ['Mango Matcha Smoothie', 'Mango, banana, oat milk, and ceremonial matcha blended smooth.', 'Smoothie', 8.5],
+      ['Smoky Jackfruit Wrap', 'Pulled jackfruit, crunchy slaw, greens, and chipotle cashew cream.', 'Wraps', 11.5],
+      ['Dark Chocolate Chia Pudding', 'Cacao chia pudding with berries, toasted coconut, and maple.', 'Dessert', 7.5]
+    ]
+  ];
   const foods = [];
   for (let partnerIndex = 0; partnerIndex < partners.length; partnerIndex += 1) {
     for (let foodIndex = 0; foodIndex < 5; foodIndex += 1) {
+      const [name, description, category, price] = menus[partnerIndex][foodIndex];
       foods.push({
         partner: partners[partnerIndex]._id,
-        name: `${partners[partnerIndex].business.name} ${['Signature', 'Classic', 'Garden', 'Chef', 'House'][foodIndex]}`,
-        description: `A customer favourite from ${partners[partnerIndex].business.name}.`,
-        price: 9 + partnerIndex * 2 + foodIndex * 1.75,
-        image: `${env.publicBaseUrl}/uploads/${categoryAsset[categories[partnerIndex][foodIndex]]}`,
-        category: categories[partnerIndex][foodIndex],
+        name,
+        description,
+        price,
+        image: `${env.publicBaseUrl}/uploads/${categoryAsset[category]}`,
+        category,
         tags: ['fresh', partnerIndex === 2 ? 'plant-based' : 'popular'],
         ratingAvg: 4 + ((foodIndex + partnerIndex) % 10) / 10,
         ratingCount: 2 + foodIndex,
@@ -165,7 +184,7 @@ async function seed() {
   await Like.insertMany(interactions.slice(0, 6));
   await Save.insertMany(interactions.slice(6));
 
-  const statuses = ['placed', 'accepted', 'preparing', 'out_for_delivery', 'delivered', 'cancelled'];
+  const statuses = ['placed', 'accepted', 'preparing', 'out_for_delivery', 'delivered', 'cancelled', 'placed', 'delivered', 'preparing', 'accepted', 'delivered', 'cancelled', 'placed', 'out_for_delivery', 'accepted'];
   const orders = [];
   for (let index = 0; index < 15; index += 1) {
     const food = createdFoods[index % createdFoods.length];
@@ -175,9 +194,9 @@ async function seed() {
       customer: customers[index % customers.length]._id,
       partner: food.partner,
       items: [{ food: food._id, name: food.name, price: food.price, quantity: 1 + (index % 2) }],
-      subtotal: food.price * (1 + (index % 2)),
+      subtotal: Math.round(food.price * (1 + (index % 2)) * 100) / 100,
       deliveryFee: 2.99,
-      total: food.price * (1 + (index % 2)) + 2.99,
+      total: Math.round((food.price * (1 + (index % 2)) + 2.99) * 100) / 100,
       status,
       statusHistory: [{ status: 'placed', at: createdAt }, ...(status === 'placed' ? [] : [{ status, at: createdAt }])],
       address: `${index + 1} Demo Street`,
@@ -188,7 +207,7 @@ async function seed() {
   const createdOrders = await Order.insertMany(orders);
   const delivered = createdOrders.filter((order) => order.status === 'delivered');
   await Review.insertMany(
-    delivered.slice(0, 5).map((order, index) => ({
+    delivered.map((order, index) => ({
       customer: order.customer,
       food: order.items[0].food,
       partner: order.partner,

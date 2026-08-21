@@ -4,7 +4,7 @@ const Like = require('../models/Like');
 const Save = require('../models/Save');
 const Order = require('../models/Order');
 const Review = require('../models/Review');
-const ApiError = require('../utils/ApiError');
+const roundMoney = require('../utils/money');
 
 function dayKey(date) {
   return date.toISOString().slice(0, 10);
@@ -28,7 +28,6 @@ async function getOverview(partnerId, rawDays) {
     Food.find({ partner: partnerId }).select('name image likeCount saveCount orderCount ratingAvg ratingCount'),
     Reel.find({ partner: partnerId }).select('caption thumbnail views likeCount saveCount')
   ]);
-  if (!foods.length && !reels.length) throw new ApiError(404, 'Partner has no listings yet');
   const foodIds = foods.map((food) => food._id);
   const reelIds = reels.map((reel) => reel._id);
   const orderWindow = { partner: partnerId, createdAt: { $gte: start, $lt: end } };
@@ -81,7 +80,7 @@ async function getOverview(partnerId, rawDays) {
   ]);
   const totals = orderTotals[0] || { orders: 0, revenue: 0, avgOrderValue: 0 };
   const reviews = reviewTotals[0] || { reviewCount: 0, ratingAvg: 0 };
-  const revenueMap = new Map(revenueByDayRows.map((row) => [row._id, { date: row._id, revenue: row.revenue, orders: row.orders }]));
+  const revenueMap = new Map(revenueByDayRows.map((row) => [row._id, { date: row._id, revenue: roundMoney(row.revenue), orders: row.orders }]));
   const revenueByDay = [];
   for (let date = new Date(start); date < end; date.setUTCDate(date.getUTCDate() + 1)) {
     const key = dayKey(date);
@@ -94,7 +93,7 @@ async function getOverview(partnerId, rawDays) {
     const revenue = foodRevenueMap.get(food._id.toString());
     return {
       food: { _id: food._id, name: food.name, image: food.image },
-      revenue: revenue?.revenue || 0,
+      revenue: roundMoney(revenue?.revenue || 0),
       orderCount: revenue?.orderCount || 0,
       trendingScore: food.likeCount + food.saveCount + (velocityMap.get(food._id.toString()) || 0)
     };
@@ -109,8 +108,8 @@ async function getOverview(partnerId, rawDays) {
   return {
     totals: {
       orders: totals.orders || 0,
-      revenue: totals.revenue || 0,
-      avgOrderValue: totals.avgOrderValue || 0,
+      revenue: roundMoney(totals.revenue || 0),
+      avgOrderValue: roundMoney(totals.avgOrderValue || 0),
       likes,
       saves,
       reelViews: reels.reduce((sum, reel) => sum + reel.views, 0),

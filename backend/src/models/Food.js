@@ -1,11 +1,12 @@
 const mongoose = require('mongoose');
+const roundMoney = require('../utils/money');
 
 const foodSchema = new mongoose.Schema(
   {
     partner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, index: true },
     name: { type: String, required: true, trim: true },
     description: { type: String, trim: true },
-    price: { type: Number, required: true, min: 0 },
+    price: { type: Number, required: true, min: 0, set: roundMoney, get: roundMoney },
     image: { type: String, trim: true },
     category: { type: String, trim: true },
     tags: [{ type: String, trim: true }],

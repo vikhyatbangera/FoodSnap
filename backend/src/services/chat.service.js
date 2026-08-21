@@ -75,11 +75,11 @@ function detectIntent(message, role) {
     return 'fallback';
   }
   if (/order/.test(text)) return 'my_orders';
-  if (/cheap|under|below|less than|price/.test(text)) return 'cheap_under_price';
   if (/recommend|suggest|for me/.test(text)) return 'recommend';
+  if (/best|top|rated|rating/.test(text)) return 'best_rated';
+  if (/(under|below|less than|up to)\s*\$?\s*\d+(?:\.\d+)?/.test(text)) return 'cheap_under_price';
   if (/reel|video/.test(text)) return 'popular_reels';
   if (/trend|trending/.test(text)) return 'trending';
-  if (/best|top|rated|rating/.test(text)) return 'best_rated';
   return 'fallback';
 }
 

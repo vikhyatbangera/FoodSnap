@@ -1,8 +1,8 @@
 # FoodSnap
 
 FoodSnap is a MERN food-discovery application for customers and food partners.
-This repository currently contains the backend foundation; the frontend will be
-added in a later handoff.
+The repository contains the Express/Mongoose API and a React/Vite frontend
+foundation.
 
 ## Requirements
 
@@ -25,6 +25,18 @@ npm run dev
 If the MongoDB container already exists, use `docker start foodsnap-mongo`.
 The API listens on `http://localhost:5000` by default.
 
+In a second terminal, start the frontend:
+
+```bash
+cd frontend
+cp .env.example .env
+npm install
+npm run dev
+```
+
+The frontend listens on `http://localhost:5173` and uses `VITE_API_URL` for
+the API base URL.
+
 ## Backend environment variables
 
 | Variable | Default | Description |
@@ -35,6 +47,12 @@ The API listens on `http://localhost:5000` by default.
 | `JWT_EXPIRES_IN` | `7d` | JWT lifetime |
 | `CLIENT_ORIGIN` | `http://localhost:5173` | CORS origin |
 | `PUBLIC_BASE_URL` | `http://localhost:5000` | Base URL for uploaded files |
+
+## Frontend environment variables
+
+| Variable | Default | Description |
+| --- | --- | --- |
+| `VITE_API_URL` | `http://localhost:5000/api` | API base URL used by the frontend |
 
 ## API summary
 

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const roundMoney = require('../utils/money');
 
 const orderSchema = new mongoose.Schema(
   {
@@ -8,13 +9,13 @@ const orderSchema = new mongoose.Schema(
       {
         food: { type: mongoose.Schema.Types.ObjectId, ref: 'Food', required: true },
         name: { type: String, required: true },
-        price: { type: Number, required: true, min: 0 },
+        price: { type: Number, required: true, min: 0, set: roundMoney, get: roundMoney },
         quantity: { type: Number, required: true, min: 1 }
       }
     ],
-    subtotal: { type: Number, required: true, min: 0 },
-    deliveryFee: { type: Number, required: true, min: 0 },
-    total: { type: Number, required: true, min: 0 },
+    subtotal: { type: Number, required: true, min: 0, set: roundMoney, get: roundMoney },
+    deliveryFee: { type: Number, required: true, min: 0, set: roundMoney, get: roundMoney },
+    total: { type: Number, required: true, min: 0, set: roundMoney, get: roundMoney },
     status: {
       type: String,
       enum: ['placed', 'accepted', 'preparing', 'out_for_delivery', 'delivered', 'cancelled'],
