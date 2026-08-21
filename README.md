@@ -1,0 +1,64 @@
+# FoodSnap
+
+FoodSnap is a MERN food-discovery application for customers and food partners.
+This repository currently contains the backend foundation; the frontend will be
+added in a later handoff.
+
+## Requirements
+
+- Node.js 20+
+- npm 10+
+- Docker 27+
+- MongoDB 7 (the recommended local setup is the Docker command below)
+
+## Local setup
+
+```bash
+docker run -d --name foodsnap-mongo -p 27017:27017 mongo:7
+cd backend
+cp .env.example .env
+npm install
+npm run seed
+npm run dev
+```
+
+If the MongoDB container already exists, use `docker start foodsnap-mongo`.
+The API listens on `http://localhost:5000` by default.
+
+## Backend environment variables
+
+| Variable | Default | Description |
+| --- | --- | --- |
+| `PORT` | `5000` | HTTP port |
+| `MONGODB_URI` | `mongodb://127.0.0.1:27017/foodsnap` | MongoDB connection |
+| `JWT_SECRET` | required | JWT signing secret |
+| `JWT_EXPIRES_IN` | `7d` | JWT lifetime |
+| `CLIENT_ORIGIN` | `http://localhost:5173` | CORS origin |
+| `PUBLIC_BASE_URL` | `http://localhost:5000` | Base URL for uploaded files |
+
+## API summary
+
+All endpoints are under `/api`.
+
+- `POST /auth/register`, `POST /auth/login`, `GET /auth/me`
+- `PATCH /users/me`, `PATCH /users/me/settings`
+- `GET /partners`, `GET /partners/:id`, `PATCH /partners/me`
+- Food, reel, interaction, search, cart, order, review, analytics, and chat
+  routes are reserved by the architecture and will be implemented in later
+  backend handoffs.
+
+Protected endpoints use `Authorization: Bearer <token>`. Partner profile and
+user photo uploads use multipart form fields named `logo` and `photo`.
+
+## Seed data
+
+Run `npm run seed` from `backend` to reset the local database and create demo
+partners, customers, foods, reels, interactions, orders, and reviews. The
+command prints the generated demo credentials when it completes.
+
+## Demo credentials
+
+The seed command prints the current credentials. The default seed accounts are:
+
+- Customer: `maya@example.com` / `Password123!`
+- Partner: `spice@example.com` / `Password123!`
