@@ -3,7 +3,7 @@ const Food = require('../models/Food');
 const Like = require('../models/Like');
 const Save = require('../models/Save');
 const ApiError = require('../utils/ApiError');
-const env = require('../config/env');
+const { uploadUrl } = require('../utils/media');
 
 function pageValue(value, fallback, max) {
   const parsed = Number(value);
@@ -60,8 +60,8 @@ async function createReel(partnerId, data, files) {
   return Reel.create({
     partner: partnerId,
     food: data.foodId || undefined,
-    video: `${env.publicBaseUrl}/uploads/${video.filename}`,
-    thumbnail: thumbnail ? `${env.publicBaseUrl}/uploads/${thumbnail.filename}` : undefined,
+    video: uploadUrl(video.filename),
+    thumbnail: thumbnail ? uploadUrl(thumbnail.filename) : undefined,
     caption: data.caption
   });
 }
@@ -78,11 +78,11 @@ async function updateReel(id, partnerId, data, files) {
   if (data.foodId !== undefined) updates.food = data.foodId || null;
   if (video) {
     if (!video.mimetype.startsWith('video/')) throw new ApiError(400, 'Video file is required');
-    updates.video = `${env.publicBaseUrl}/uploads/${video.filename}`;
+    updates.video = uploadUrl(video.filename);
   }
   if (thumbnail) {
     if (!thumbnail.mimetype.startsWith('image/')) throw new ApiError(400, 'Thumbnail must be an image');
-    updates.thumbnail = `${env.publicBaseUrl}/uploads/${thumbnail.filename}`;
+    updates.thumbnail = uploadUrl(thumbnail.filename);
   }
   return Reel.findByIdAndUpdate(id, { $set: updates }, { new: true, runValidators: true });
 }

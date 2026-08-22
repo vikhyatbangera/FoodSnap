@@ -1,13 +1,14 @@
 import { Link } from 'react-router-dom';
 import RatingStars from './RatingStars';
 import { useCart } from '../context/CartContext';
+import { mediaUrl } from '../utils/media';
 
 export default function FoodCard({ food }) {
   const { addItem } = useCart();
   return (
     <article className="food-card">
       <Link to={`/foods/${food._id}`} className="food-card-image">
-        {food.image ? <img src={food.image} alt={food.name} /> : <span>🍜</span>}
+        {food.image ? <img src={mediaUrl(food.image)} alt={food.name} /> : <span>🍜</span>}
         <span className="category-pill">{food.category || 'Featured'}</span>
       </Link>
       <div className="food-card-body">

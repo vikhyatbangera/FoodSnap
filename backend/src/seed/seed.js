@@ -3,6 +3,7 @@ const path = require('path');
 const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
 const env = require('../config/env');
+const { uploadUrl } = require('../utils/media');
 const connectDb = require('../db');
 const User = require('../models/User');
 const Food = require('../models/Food');
@@ -117,7 +118,7 @@ async function seed() {
         name,
         description,
         price,
-        image: `${env.publicBaseUrl}/uploads/seed-food-${slugify(name)}.png`,
+        image: uploadUrl(`seed-food-${slugify(name)}.png`),
         category,
         tags: ['fresh', partnerIndex === 2 ? 'plant-based' : 'popular'],
         ratingAvg: 4 + ((foodIndex + partnerIndex) % 10) / 10,
@@ -137,8 +138,8 @@ async function seed() {
       {
         partner: partners[partnerIndex]._id,
         food: partnerFoods[0]._id,
-        video: `${env.publicBaseUrl}/uploads/seed-reel-${['spice', 'pasta', 'green'][partnerIndex]}.mp4`,
-        thumbnail: `${env.publicBaseUrl}/uploads/seed-reel-${['spice', 'pasta', 'green'][partnerIndex]}.png`,
+        video: uploadUrl(`seed-reel-${['spice', 'pasta', 'green'][partnerIndex]}.mp4`),
+        thumbnail: uploadUrl(`seed-reel-${['spice', 'pasta', 'green'][partnerIndex]}.png`),
         caption: `Behind the scenes at ${partners[partnerIndex].business.name}`,
         views: 125 + partnerIndex * 80,
         likeCount: 4 + partnerIndex
@@ -146,7 +147,7 @@ async function seed() {
       {
         partner: partners[partnerIndex]._id,
         food: partnerFoods[1]._id,
-        video: `${env.publicBaseUrl}/uploads/seed-reel-${['spice', 'pasta', 'green'][partnerIndex]}.mp4`,
+        video: uploadUrl(`seed-reel-${['spice', 'pasta', 'green'][partnerIndex]}.mp4`),
         thumbnail: partnerFoods[1].image,
         caption: `Watch our ${partnerFoods[1].name} come together`,
         views: 90 + partnerIndex * 65,

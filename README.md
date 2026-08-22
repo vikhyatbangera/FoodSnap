@@ -45,14 +45,43 @@ the API base URL.
 | `MONGODB_URI` | `mongodb://127.0.0.1:27017/foodsnap` | MongoDB connection |
 | `JWT_SECRET` | required | JWT signing secret |
 | `JWT_EXPIRES_IN` | `7d` | JWT lifetime |
-| `CLIENT_ORIGIN` | `http://localhost:5173` | CORS origin |
-| `PUBLIC_BASE_URL` | `http://localhost:5000` | Base URL for uploaded files |
+| `CLIENT_ORIGIN` | `http://localhost:5173,http://localhost:4173` | Comma-separated allowed browser origins; any `*.vercel.app` host is always allowed |
+| `PUBLIC_BASE_URL` | empty | Optional absolute prefix for uploaded media; empty stores `/uploads/...` paths that the frontend resolves against the API host |
 
 ## Frontend environment variables
 
 | Variable | Default | Description |
 | --- | --- | --- |
 | `VITE_API_URL` | `http://localhost:5000/api` | API base URL used by the frontend |
+
+## Deployment (Vercel + Render)
+
+The frontend is deployed on Vercel and the API on Render:
+
+- Frontend: https://food-snap-lovat.vercel.app
+- API: https://foodsnap-qwjr.onrender.com
+
+Vercel project settings:
+
+- Root directory: `frontend`
+- Build command: `npm run build`, output directory: `dist`
+- `frontend/vercel.json` rewrites all routes to `index.html` so client-side
+  routes such as `/login` do not 404 on refresh.
+- `VITE_API_URL` is committed in `frontend/.env.production`; an environment
+  variable of the same name in Vercel overrides it.
+
+Render web service settings:
+
+- Root directory: `backend`
+- Build command: `npm install`, start command: `npm start`
+- Environment: `MONGODB_URI` (MongoDB Atlas), `JWT_SECRET`, and
+  `CLIENT_ORIGIN=https://food-snap-lovat.vercel.app`
+- Leave `PUBLIC_BASE_URL` unset. Render's filesystem is ephemeral, so uploaded
+  images and videos disappear on redeploy; re-run the seed or attach a disk if
+  media must persist.
+
+To seed the deployed database, run `MONGODB_URI=<atlas-uri> npm run seed` from
+`backend` locally.
 
 ## API summary
 

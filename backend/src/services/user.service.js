@@ -1,4 +1,4 @@
-const env = require('../config/env');
+const { uploadUrl } = require('../utils/media');
 const Save = require('../models/Save');
 const Food = require('../models/Food');
 const Reel = require('../models/Reel');
@@ -17,7 +17,7 @@ async function getMe(userId) {
 async function updateMe(userId, data, file) {
   const updates = {};
   if (data.name !== undefined) updates.name = data.name;
-  if (file) updates.photo = `${env.publicBaseUrl}/uploads/${file.filename}`;
+  if (file) updates.photo = uploadUrl(file.filename);
   const user = await User.findByIdAndUpdate(userId, { $set: updates }, { new: true, runValidators: true });
   if (!user) throw new ApiError(404, 'User not found');
   return publicUser(user);
