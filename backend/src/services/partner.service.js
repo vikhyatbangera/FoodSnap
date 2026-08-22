@@ -2,7 +2,7 @@ const User = require('../models/User');
 const Food = require('../models/Food');
 const Reel = require('../models/Reel');
 const ApiError = require('../utils/ApiError');
-const env = require('../config/env');
+const { uploadUrl } = require('../utils/media');
 const { publicUser } = require('./auth.service');
 
 async function updateProfile(userId, data, file) {
@@ -14,7 +14,7 @@ async function updateProfile(userId, data, file) {
         : data[field];
     }
   }
-  if (file) business.logo = `${env.publicBaseUrl}/uploads/${file.filename}`;
+  if (file) business.logo = uploadUrl(file.filename);
   const user = await User.findOneAndUpdate(
     { _id: userId, role: 'partner' },
     { $set: Object.fromEntries(Object.entries(business).map(([key, value]) => [`business.${key}`, value])) },

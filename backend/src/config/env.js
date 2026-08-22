@@ -16,8 +16,11 @@ const env = {
   mongodbUri: process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/foodsnap',
   jwtSecret: process.env.JWT_SECRET,
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
-  clientOrigin: process.env.CLIENT_ORIGIN || 'http://localhost:5173',
-  publicBaseUrl: process.env.PUBLIC_BASE_URL || 'http://localhost:5000',
+  clientOrigins: (process.env.CLIENT_ORIGIN || 'http://localhost:5173,http://localhost:4173')
+    .split(',')
+    .map((origin) => origin.trim().replace(/\/$/, ''))
+    .filter(Boolean),
+  publicBaseUrl: (process.env.PUBLIC_BASE_URL || '').replace(/\/$/, ''),
   openaiApiKey: process.env.OPENAI_API_KEY || '',
   uploadsDir: path.resolve(__dirname, '../../uploads')
 };

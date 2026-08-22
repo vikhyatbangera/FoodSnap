@@ -20,7 +20,16 @@ const ApiError = require('./utils/ApiError');
 
 const app = express();
 
-app.use(cors({ origin: env.clientOrigin }));
+const allowedOrigin = (origin, callback) => {
+  if (!origin) return callback(null, true);
+  const normalized = origin.replace(/\/$/, '');
+  const allowed =
+    env.clientOrigins.includes(normalized) ||
+    /^https:\/\/[a-z0-9-]+\.vercel\.app$/i.test(normalized);
+  return allowed ? callback(null, true) : callback(new ApiError(403, `Origin ${origin} is not allowed`));
+};
+
+app.use(cors({ origin: allowedOrigin, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));

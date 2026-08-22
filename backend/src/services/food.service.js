@@ -2,7 +2,7 @@ const Food = require('../models/Food');
 const Reel = require('../models/Reel');
 const Review = require('../models/Review');
 const ApiError = require('../utils/ApiError');
-const env = require('../config/env');
+const { uploadUrl } = require('../utils/media');
 
 function pageValue(value, fallback, max) {
   const parsed = Number(value);
@@ -118,7 +118,7 @@ async function createFood(userId, data, file) {
     category: data.category,
     tags: parseTags(data.tags),
     isAvailable: data.isAvailable === undefined ? true : data.isAvailable,
-    image: file ? `${env.publicBaseUrl}/uploads/${file.filename}` : data.image
+    image: file ? uploadUrl(file.filename) : data.image
   });
   return food;
 }
@@ -131,7 +131,7 @@ async function updateFood(id, userId, data, file) {
   }
   const tags = parseTags(data.tags);
   if (tags !== undefined) updates.tags = tags;
-  if (file) updates.image = `${env.publicBaseUrl}/uploads/${file.filename}`;
+  if (file) updates.image = uploadUrl(file.filename);
   return Food.findByIdAndUpdate(id, { $set: updates }, { new: true, runValidators: true });
 }
 
