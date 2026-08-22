@@ -2,6 +2,13 @@ import { useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
+// Matches the accounts created by the backend seed script.
+const DEMO_PASSWORD = 'Password123!';
+const DEMO_ACCOUNTS = [
+  { label: 'Demo customer', email: 'maya@example.com' },
+  { label: 'Demo partner', email: 'spice@example.com' }
+];
+
 export default function Login() {
   const { user, login } = useAuth();
   const navigate = useNavigate();
@@ -39,6 +46,21 @@ export default function Login() {
           <label>Password<input type="password" autoComplete="current-password" value={form.password} onChange={(event) => setForm({ ...form, password: event.target.value })} placeholder="Your password" /></label>
           <button className="button button-accent button-wide" disabled={submitting}>{submitting ? 'Signing in…' : 'Sign in'}</button>
         </form>
+        <div className="auth-demo">
+          <span>Just exploring? Try a seeded account</span>
+          <div className="auth-demo-row">
+            {DEMO_ACCOUNTS.map((account) => (
+              <button
+                key={account.email}
+                type="button"
+                className="button button-ghost button-small"
+                onClick={() => setForm({ email: account.email, password: DEMO_PASSWORD })}
+              >
+                {account.label}
+              </button>
+            ))}
+          </div>
+        </div>
         <p className="auth-switch">New to FoodSnap? <Link to="/register">Create an account</Link></p>
       </section>
     </main>
